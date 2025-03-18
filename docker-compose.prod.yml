@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SECRET: ${NEXT_PUBLIC_SECRET}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - SECRET_KEY=${SECRET_KEY}
+    restart: always
+    # Production-specific settings
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3 
